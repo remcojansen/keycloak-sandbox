@@ -1,6 +1,9 @@
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:latest
+    image: keycloak-local-custom:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: keycloak-local
     command:
       - start-dev
