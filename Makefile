@@ -8,6 +8,13 @@ up:
 	docker compose up -d
 	bash ./scripts/wait-for-local-keycloak.sh
 
+.PHONY: up-rebuild
+up-rebuild:
+	bash ./scripts/generate-cert.sh
+	docker compose build --no-cache keycloak
+	docker compose up -d --force-recreate keycloak
+	bash ./scripts/wait-for-local-keycloak.sh
+
 .PHONY: config
 config:
 	if [ -z "$(IAC_CMD)" ]; then echo "Error: install OpenTofu (tofu) or Terraform (terraform)."; exit 1; fi
@@ -27,7 +34,8 @@ clean:
 
 help:
 	echo "Available targets:"
-	echo "  make up      - Start containers and seed Vault"
-	echo "  make config  - Apply OpenTofu/Terraform configuration (prefers tofu)"
-	echo "  make down    - Stop and remove containers"
-	echo "  make clean   - Remove compose containers and IaC local state/artifacts"
+	echo "  make up         - Start containers and seed Vault"
+	echo "  make up-rebuild - Rebuild Keycloak image (no cache) and restart container"
+	echo "  make config     - Apply OpenTofu/Terraform configuration (prefers tofu)"
+	echo "  make down       - Stop and remove containers"
+	echo "  make clean      - Remove compose containers and IaC local state/artifacts"
