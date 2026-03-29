@@ -1,0 +1,20 @@
+services:
+  keycloak:
+    image: keycloak-local-custom:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: keycloak-local
+    command:
+      - start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTPS_ENABLED: "true"
+      KC_HTTPS_CERTIFICATE_FILE: /etc/keycloak/certs/server.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/keycloak/certs/server.key
+      KC_HOSTNAME_STRICT: "false"
+    ports:
+      - "9443:8443"
+    volumes:
+      - ./certs:/etc/keycloak/certs:ro
