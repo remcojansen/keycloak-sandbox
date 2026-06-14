@@ -102,10 +102,10 @@ fmt: check-tf
 down: check-compose
 	$(COMPOSE_CMD) down --remove-orphans
 
-.PHONY: clean 
+.PHONY: clean
 clean: check-compose
 	$(COMPOSE_CMD) down --volumes --rmi all --remove-orphans
 	rm -f $(PROVIDER_CLI_CONFIG)
-	rm -f ${CONFIG_DIR}/{.terraform.lock.hcl,terraform.tfstate,terraform.tfstate.backup}
-	rm -rf ${CONFIG_DIR}/.terraform
+	rm -f $(CONFIG_DIR)/.terraform.lock.hcl $(CONFIG_DIR)/terraform.tfstate $(CONFIG_DIR)/terraform.tfstate.backup
+	rm -rf $(CONFIG_DIR)/.terraform
 	rm -rf certs/

@@ -1,7 +1,7 @@
 variable "keycloak_url" {
   description = "Keycloak base URL"
   type        = string
-  default     = "https://localhost:9443"
+  default     = "https://localhost:19443"
 }
 
 variable "keycloak_admin_user" {
@@ -14,6 +14,7 @@ variable "keycloak_admin_password" {
   description = "Keycloak admin password"
   type        = string
   sensitive   = true
+  default     = "admin"
 }
 
 variable "keycloak_tls_insecure_skip_verify" {
