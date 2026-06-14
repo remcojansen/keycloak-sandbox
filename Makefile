@@ -18,14 +18,16 @@ PROVIDER_CLI_CONFIG ?= $(CONFIG_DIR)/provider.tfrc
 TF_ENV = TF_CLI_CONFIG_FILE=$(CURDIR)/$(PROVIDER_CLI_CONFIG) TOFU_CLI_CONFIG_FILE=$(CURDIR)/$(PROVIDER_CLI_CONFIG)
 
 .PHONY: help
+.DEFAULT_GOAL := help
 help:
 	@echo "Available targets:"
 	@echo "  help     Show this help message"
 	@echo "  up       Start services and apply Terraform/OpenTofu configuration"
+	@echo "  config   Apply Terraform/OpenTofu configuration without starting services"
 	@echo "  status   Show compose service status and port mappings"
 	@echo "  fmt      Format Terraform/OpenTofu files in config/"
 	@echo "  down     Stop services without removing volumes/images"
-	@echo "  destroy  Destroy Terraform/OpenTofu resources and remove services, volumes, and images"
+	@echo "  clean    Remove services, volumes, images, certs, and local Terraform/OpenTofu working state"
 
 .PHONY: check-compose
 check-compose:
@@ -40,10 +42,6 @@ check-tf:
 		echo "No IaC tool found. Install terraform or tofu, or set TF_CMD=\"<iac command>\"."; \
 		exit 1; \
 	fi
-
-.PHONY: tf-init
-tf-init: check-tf provider-cli-config
-	$(TF_ENV) $(TF_CMD) -chdir=$(CONFIG_DIR) init -upgrade
 
 .PHONY: provider-cli-config
 provider-cli-config:
@@ -75,12 +73,22 @@ compose-up: check-compose generate-cert
 	$(COMPOSE_CMD) up -d
 	bash ./scripts/wait-for-local-keycloak.sh
 
-.PHONY: tf-apply
-tf-apply: check-tf tf-init
+.PHONY: compose-up-rebuild
+compose-up-rebuild: check-compose generate-cert
+	${COMPOSE_CMD} build --no-cache keycloak
+	${COMPOSE_CMD} up -d --force-recreate keycloak
+	bash ./scripts/wait-for-local-keycloak.sh
+
+.PHONY: config
+config: check-tf provider-cli-config
+	$(TF_ENV) $(TF_CMD) -chdir=$(CONFIG_DIR) init -upgrade
 	$(TF_ENV) $(TF_CMD) -chdir=$(CONFIG_DIR) apply -auto-approve
 
 .PHONY: up
-up: compose-up tf-apply
+up: compose-up config
+
+.PHONY: up-rebuild
+up-rebuild: compose-up-rebuild config
 
 .PHONY: status
 status: check-compose
@@ -94,7 +102,10 @@ fmt: check-tf
 down: check-compose
 	$(COMPOSE_CMD) down --remove-orphans
 
-.PHONY: destroy
-destroy: check-compose
+.PHONY: clean 
+clean: check-compose
 	$(COMPOSE_CMD) down --volumes --rmi all --remove-orphans
-	rm -f $(CONFIG_DIR)/terraform.tfstate* $(PROVIDER_CLI_CONFIG)
+	rm -f $(PROVIDER_CLI_CONFIG)
+	rm -f ${CONFIG_DIR}/{.terraform.lock.hcl,terraform.tfstate,terraform.tfstate.backup}
+	rm -rf ${CONFIG_DIR}/.terraform
+	rm -rf certs/

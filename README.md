@@ -6,7 +6,7 @@ A local Keycloak sandbox environment backed by PostgreSQL, with a Terraform/Open
 
 | Component | Details |
 |-----------|---------|
-| Keycloak  | `quay.io/keycloak/keycloak` — exposed on `https://localhost:9443` |
+| Keycloak  | `keycloak-sandbox:latest` (built from `Dockerfile`) — exposed on `https://localhost:19443` |
 | PostgreSQL | `postgres:16-alpine` — used as the Keycloak database |
 | IaC | Terraform / OpenTofu via the `keycloak/keycloak` provider |
 
@@ -34,10 +34,12 @@ This single command will:
 |-----------|-------------|
 | `help`    | Show available targets |
 | `up`      | Start services and apply Terraform/OpenTofu configuration |
+| `up-rebuild` | Rebuild the Keycloak image, restart Keycloak, and apply Terraform/OpenTofu configuration |
+| `config`  | Apply Terraform/OpenTofu configuration without starting services |
 | `status`  | Show Compose service status and port mappings |
 | `fmt`     | Format Terraform/OpenTofu files in `config/` |
 | `down`    | Stop services without removing volumes or images |
-| `destroy` | Destroy Terraform/OpenTofu resources and remove services, volumes, and images |
+| `clean`   | Remove services, volumes, images, generated certs, and local Terraform/OpenTofu working state |
 
 ## Configuration
 

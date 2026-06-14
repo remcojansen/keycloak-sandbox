@@ -15,8 +15,11 @@ services:
       retries: 5
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.6.3
-    container_name: keycloak-config-keycloak
+    image: keycloak-sandbox:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: keycloak-sandbox
     command:
       - start-dev
     depends_on:
@@ -36,7 +39,7 @@ services:
       KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/keycloak/certs/server.key
       KC_HOSTNAME_STRICT: "false"
     ports:
-      - "9443:8443"
+      - "19443:8443"
     volumes:
       - ./certs:/etc/keycloak/certs:ro
 
