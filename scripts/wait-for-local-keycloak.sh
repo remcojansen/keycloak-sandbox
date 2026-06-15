@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-KEYCLOAK_URL="https://localhost:9443/"
+KEYCLOAK_URL="https://localhost:19443/"
 
 printf "Waiting for local Keycloak to be ready"
 

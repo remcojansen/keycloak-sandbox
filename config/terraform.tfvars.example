@@ -1,0 +1,4 @@
+keycloak_url            = "https://localhost:19443"
+keycloak_admin_user     = "admin"
+keycloak_admin_password = "admin"
+realm_name              = "example"
