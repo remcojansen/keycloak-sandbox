@@ -6,4 +6,5 @@ terraform.tfstate.backup
 *.tfplan
 terraform.tfvars
 certs/*
+config/provider.tfrc
 
