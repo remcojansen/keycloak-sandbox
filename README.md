@@ -49,11 +49,6 @@ Terraform variables are read from `config/terraform.tfvars`. Copy the example fi
 cp config/terraform.tfvars.example config/terraform.tfvars
 ```
 
-## What the Terraform configuration creates
-
-- **Realm** — `keycloak_realm.example` with brute-force protection enabled.
-- **OpenID client** — `example-client` (confidential, standard flow) with a randomly generated secret.
-
 ## Local provider override
 
 If a locally built Keycloak provider binary is present in `config/provider/`, `make up` will configure Terraform/OpenTofu to use it via a dev override (`config/provider.tfrc`). Otherwise the registry version is used.
