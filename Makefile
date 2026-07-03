@@ -82,6 +82,10 @@ compose-up-rebuild: check-compose generate-cert
 .PHONY: config
 config: check-tf provider-cli-config
 	$(TF_ENV) $(TF_CMD) -chdir=$(CONFIG_DIR) init -upgrade
+	# Create the realm and client scope resources first as their IDs are needed 
+	# for the protocol mappers to be imported
+	$(TF_ENV) $(TF_CMD) -chdir=$(CONFIG_DIR) apply -auto-approve -target=keycloak_realm.example
+	$(TF_ENV) $(TF_CMD) -chdir=$(CONFIG_DIR) apply -auto-approve -target=data.keycloak_openid_client_scope.profile
 	$(TF_ENV) $(TF_CMD) -chdir=$(CONFIG_DIR) apply -auto-approve
 
 .PHONY: up
