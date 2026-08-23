@@ -7,4 +7,6 @@ terraform.tfstate.backup
 terraform.tfvars
 certs/*
 config/provider.tfrc
+target/
+.vscode/
 
