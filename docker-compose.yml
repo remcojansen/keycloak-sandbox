@@ -26,6 +26,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      KC_HTTP_HOST: 0.0.0.0
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
       KC_DB: postgres

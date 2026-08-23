@@ -1,0 +1,29 @@
+# Use this Dockerfile to build a custom Keycloak image based on a local build of 
+# Keycloak with custom extensions.
+#
+# Copy the local build to target/keycloak/keycloak.tar.gz before building the image.
+
+FROM docker.io/maven:3.9.11-eclipse-temurin-21 AS builder
+WORKDIR /workspace
+COPY pom.xml ./
+COPY extensions ./extensions
+RUN mvn --batch-mode --no-transfer-progress -DskipTests package
+
+FROM registry.access.redhat.com/ubi9 AS extract
+COPY target/keycloak/keycloak.tar.gz /tmp/
+RUN mkdir /keycloak \
+ && tar -xzf /tmp/keycloak.tar.gz \
+      --strip-components=1 \
+      -C /keycloak
+
+
+FROM registry.access.redhat.com/ubi9/openjdk-21-runtime
+USER root
+COPY --from=extract /keycloak /opt/keycloak
+COPY --from=builder /workspace/target/*.jar /opt/keycloak/providers/
+RUN chown -R 1000 /opt/keycloak
+USER 1000
+RUN /opt/keycloak/bin/kc.sh build
+
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
+CMD ["start-dev"]
