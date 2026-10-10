@@ -6,7 +6,7 @@ COPY extensions ./extensions
 
 RUN mvn --batch-mode --no-transfer-progress -DskipTests package
 
-FROM quay.io/keycloak/keycloak:26.7.2
+FROM quay.io/keycloak/keycloak:26.8.0
 COPY --from=builder /workspace/target/*.jar /opt/keycloak/providers/
 RUN /opt/keycloak/bin/kc.sh build
 
